@@ -9,6 +9,8 @@ export const useSessionStore = defineStore('session', () => {
   const history = ref<string[]>([])
   const log = ref<SessionLogEntry[]>([])
   const isLoading = ref(false)
+  // Ordered list of raw user inputs; used by Africa's Talking adapter to build the cumulative `text` field
+  const inputLog = ref<string[]>([])
 
   function startSession(id: string, serviceCode: string) {
     sessionId.value = id
@@ -16,6 +18,7 @@ export const useSessionStore = defineStore('session', () => {
     currentText.value = ''
     history.value = []
     log.value = []
+    inputLog.value = []
 
     addLogEntry({
       direction: 'OUT',
@@ -44,7 +47,16 @@ export const useSessionStore = defineStore('session', () => {
     currentText.value = ''
     history.value = []
     log.value = []
+    inputLog.value = []
     isLoading.value = false
+  }
+
+  function pushInput(input: string) {
+    inputLog.value.push(input)
+  }
+
+  function cumulativeInput(): string {
+    return inputLog.value.join('*')
   }
 
   function pushHistory(menuKey: string) {
@@ -74,6 +86,7 @@ export const useSessionStore = defineStore('session', () => {
     history,
     log,
     isLoading,
+    inputLog,
     startSession,
     setActive,
     endSession,
@@ -83,5 +96,7 @@ export const useSessionStore = defineStore('session', () => {
     popHistory,
     addLogEntry,
     setLoading,
+    pushInput,
+    cumulativeInput,
   }
 })
