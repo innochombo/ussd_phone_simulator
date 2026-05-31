@@ -74,6 +74,18 @@ function onFlowFileChange(e: Event) {
           <!-- ── General tab ── -->
           <template v-if="activeTab === 'general'">
             <div class="space-y-4">
+              <!-- Phone number -->
+              <div class="flex items-center gap-3">
+                <label class="text-xs text-gray-500 dark:text-gray-400 w-24 flex-shrink-0">Phone number</label>
+                <input
+                  :value="settings.msisdn"
+                  type="text"
+                  placeholder="265888000001"
+                  class="flex-1 rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 px-2 py-1 text-xs font-mono focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  @input="settings.setMsisdn(($event.target as HTMLInputElement).value)"
+                />
+              </div>
+
               <!-- Mock delay -->
               <div v-if="settings.mode === 'mock'" class="flex items-center gap-3">
                 <label class="text-xs text-gray-500 dark:text-gray-400 w-24 flex-shrink-0">Mock delay</label>
