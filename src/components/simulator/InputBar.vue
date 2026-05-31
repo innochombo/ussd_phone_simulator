@@ -1,11 +1,9 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useSimulator } from '@/composables/useSimulator'
-import { useSessionStore } from '@/stores/session'
 import { useSettingsStore } from '@/stores/settings'
 
 const { inputValue, canSend, isIdle, isEnded, dial, send, hangUp } = useSimulator()
-const session = useSessionStore()
 const settings = useSettingsStore()
 
 const inputEl = ref<HTMLInputElement | null>(null)
@@ -111,15 +109,5 @@ function onKeydown(e: KeyboardEvent) {
       </button>
     </div>
 
-    <!-- MSISDN -->
-    <div class="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400 mt-1">
-      <span class="font-semibold">MSISDN:</span>
-      <input
-        v-model="settings.msisdn"
-        type="text"
-        class="flex-1 rounded border border-gray-200 dark:border-gray-700 bg-transparent px-2 py-0.5 text-xs font-mono focus:outline-none focus:ring-1 focus:ring-blue-400"
-        :disabled="session.status !== 'IDLE' && !isEnded"
-      />
-    </div>
   </div>
 </template>
