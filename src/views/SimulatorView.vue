@@ -5,11 +5,23 @@ import SessionLog from '@/components/simulator/SessionLog.vue'
 import LiveModePanel from '@/components/simulator/LiveModePanel.vue'
 import { useFlowStore } from '@/stores/flow'
 import { useSettingsStore } from '@/stores/settings'
+import { useShareableUrl } from '@/composables/useShareableUrl'
+import { SKINS } from '@/types/skins'
+import type { PhoneSkin } from '@/types/skins'
 
 const flow = useFlowStore()
 const settings = useSettingsStore()
+const { copied, copyShareUrl } = useShareableUrl()
 
 const activeTab = ref<'general' | 'live'>('general')
+
+const SKIN_SWATCHES: Record<PhoneSkin, string> = {
+  slate:    'bg-gray-600',
+  midnight: 'bg-blue-900',
+  rose:     'bg-rose-800',
+  forest:   'bg-green-800',
+  sand:     'bg-amber-600',
+}
 
 function onFlowFileChange(e: Event) {
   const file = (e.target as HTMLInputElement).files?.[0]
@@ -24,7 +36,7 @@ function onFlowFileChange(e: Event) {
 </script>
 
 <template>
-  <div class="container mx-auto px-4 py-8 flex flex-col lg:flex-row gap-8 items-start justify-center">
+  <div class="container mx-auto px-4 py-6 md:py-8 flex flex-col lg:flex-row gap-6 md:gap-8 items-center lg:items-start justify-center">
     <!-- Phone -->
     <div class="flex-shrink-0">
       <PhoneFrame />
@@ -59,19 +71,14 @@ function onFlowFileChange(e: Event) {
         </div>
 
         <div class="p-4">
-          <!-- General tab -->
+          <!-- ── General tab ── -->
           <template v-if="activeTab === 'general'">
-            <div class="space-y-3">
-              <!-- Mock delay slider -->
+            <div class="space-y-4">
+              <!-- Mock delay -->
               <div v-if="settings.mode === 'mock'" class="flex items-center gap-3">
-                <label class="text-xs text-gray-500 dark:text-gray-400 w-24 flex-shrink-0">
-                  Mock delay
-                </label>
+                <label class="text-xs text-gray-500 dark:text-gray-400 w-24 flex-shrink-0">Mock delay</label>
                 <input
-                  type="range"
-                  min="0"
-                  max="3000"
-                  step="50"
+                  type="range" min="0" max="3000" step="50"
                   :value="settings.delayMs"
                   class="flex-1 accent-green-600"
                   @input="settings.setDelay(Number(($event.target as HTMLInputElement).value))"
@@ -79,6 +86,27 @@ function onFlowFileChange(e: Event) {
                 <span class="text-xs font-mono text-gray-500 dark:text-gray-400 w-14 text-right">
                   {{ settings.delayMs }}ms
                 </span>
+              </div>
+
+              <!-- Phone skin -->
+              <div class="flex items-center gap-3">
+                <label class="text-xs text-gray-500 dark:text-gray-400 w-24 flex-shrink-0">Phone skin</label>
+                <div class="flex items-center gap-2">
+                  <button
+                    v-for="(swatchClass, skinKey) in SKIN_SWATCHES"
+                    :key="skinKey"
+                    :title="SKINS[skinKey as PhoneSkin].label"
+                    class="w-6 h-6 rounded-full border-2 transition-all"
+                    :class="[
+                      swatchClass,
+                      settings.skin === skinKey
+                        ? 'border-blue-500 scale-110'
+                        : 'border-transparent hover:scale-105',
+                    ]"
+                    @click="settings.setSkin(skinKey as PhoneSkin)"
+                  />
+                </div>
+                <span class="text-xs text-gray-400 dark:text-gray-500">{{ SKINS[settings.skin].label }}</span>
               </div>
 
               <!-- Active flow -->
@@ -95,7 +123,7 @@ function onFlowFileChange(e: Event) {
                 </button>
               </div>
 
-              <!-- Flow file upload -->
+              <!-- Load JSON -->
               <div class="flex items-center gap-3">
                 <label class="text-xs text-gray-500 dark:text-gray-400 w-24 flex-shrink-0">Load JSON</label>
                 <label class="cursor-pointer">
@@ -105,6 +133,20 @@ function onFlowFileChange(e: Event) {
                   </span>
                 </label>
               </div>
+
+              <!-- Share flow URL -->
+              <div class="flex items-center gap-3">
+                <label class="text-xs text-gray-500 dark:text-gray-400 w-24 flex-shrink-0">Share flow</label>
+                <button
+                  class="text-xs px-2.5 py-1 rounded-md border transition-colors"
+                  :class="copied
+                    ? 'border-green-400 bg-green-50 dark:bg-green-950 text-green-600 dark:text-green-400'
+                    : 'border-gray-300 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:border-blue-400 hover:text-blue-500 dark:hover:text-blue-400'"
+                  @click="copyShareUrl"
+                >
+                  {{ copied ? '✓ Copied!' : 'Copy link' }}
+                </button>
+              </div>
             </div>
 
             <!-- Validation errors -->
@@ -112,17 +154,13 @@ function onFlowFileChange(e: Event) {
               v-if="flow.validationErrors.length > 0"
               class="mt-3 rounded-md bg-red-50 dark:bg-red-950 border border-red-200 dark:border-red-800 p-2"
             >
-              <p
-                v-for="err in flow.validationErrors"
-                :key="err"
-                class="text-xs text-red-600 dark:text-red-400"
-              >
+              <p v-for="err in flow.validationErrors" :key="err" class="text-xs text-red-600 dark:text-red-400">
                 {{ err }}
               </p>
             </div>
           </template>
 
-          <!-- Live mode tab -->
+          <!-- ── Live mode tab ── -->
           <template v-else>
             <div
               v-if="settings.mode !== 'live'"

@@ -1,9 +1,11 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
+import type { PhoneSkin } from '@/types/skins'
 
 export type SimulatorMode = 'mock' | 'live'
 export type ThemeMode = 'light' | 'dark'
 export type RequestFormat = 'json' | 'africas-talking'
+export type { PhoneSkin }
 
 export const useSettingsStore = defineStore('settings', () => {
   const msisdn = ref('265888000001')
@@ -11,6 +13,7 @@ export const useSettingsStore = defineStore('settings', () => {
   const mode = ref<SimulatorMode>('mock')
   const delayMs = ref(300)
   const theme = ref<ThemeMode>('light')
+  const skin = ref<PhoneSkin>('slate')
 
   // Live mode
   const liveEndpointUrl = ref('http://localhost:8000/ussd')
@@ -24,6 +27,7 @@ export const useSettingsStore = defineStore('settings', () => {
   function setMode(value: SimulatorMode) { mode.value = value }
   function setDelay(ms: number) { delayMs.value = Math.max(0, Math.min(5000, ms)) }
   function toggleTheme() { theme.value = theme.value === 'light' ? 'dark' : 'light' }
+  function setSkin(s: PhoneSkin) { skin.value = s }
   function setLiveEndpointUrl(url: string) { liveEndpointUrl.value = url }
   function setRequestFormat(f: RequestFormat) { requestFormat.value = f }
   function setNetworkCode(code: string) { networkCode.value = code }
@@ -45,6 +49,7 @@ export const useSettingsStore = defineStore('settings', () => {
     mode,
     delayMs,
     theme,
+    skin,
     liveEndpointUrl,
     requestFormat,
     networkCode,
@@ -55,6 +60,7 @@ export const useSettingsStore = defineStore('settings', () => {
     setMode,
     setDelay,
     toggleTheme,
+    setSkin,
     setLiveEndpointUrl,
     setRequestFormat,
     setNetworkCode,
