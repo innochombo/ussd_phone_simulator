@@ -24,13 +24,22 @@ const panel = ref<Panel>('split')
       </button>
     </div>
 
-    <!-- Panels -->
-    <div class="flex flex-1 overflow-hidden">
+    <!--
+      Panels container.
+      Split mode: stacked vertically on mobile, side-by-side on md+.
+      Single mode: always full-size.
+    -->
+    <div
+      class="flex flex-1 overflow-hidden"
+      :class="panel === 'split' ? 'flex-col md:flex-row' : 'flex-row'"
+    >
       <!-- Editor pane -->
       <div
         v-show="panel === 'editor' || panel === 'split'"
-        class="flex flex-col overflow-hidden border-r border-gray-200 dark:border-gray-800"
-        :class="panel === 'split' ? 'w-1/2' : 'w-full'"
+        class="flex flex-col overflow-hidden"
+        :class="panel === 'split'
+          ? 'h-1/2 md:h-auto md:w-1/2 border-b md:border-b-0 md:border-r border-gray-200 dark:border-gray-800'
+          : 'w-full border-r border-gray-200 dark:border-gray-800'"
       >
         <FlowEditor />
       </div>
@@ -39,7 +48,7 @@ const panel = ref<Panel>('split')
       <div
         v-show="panel === 'preview' || panel === 'split'"
         class="flex flex-col overflow-hidden"
-        :class="panel === 'split' ? 'w-1/2' : 'w-full'"
+        :class="panel === 'split' ? 'h-1/2 md:h-auto md:w-1/2' : 'w-full'"
       >
         <FlowPreview />
       </div>

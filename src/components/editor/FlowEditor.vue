@@ -4,9 +4,11 @@ import MonacoEditor from './MonacoEditor.vue'
 import { useFlowStore } from '@/stores/flow'
 import { useSettingsStore } from '@/stores/settings'
 import { parseFlowJson } from '@/engine/FlowParser'
+import { useShareableUrl } from '@/composables/useShareableUrl'
 
 const flow = useFlowStore()
 const settings = useSettingsStore()
+const { copied, copyShareUrl } = useShareableUrl()
 
 const editorRef = ref<InstanceType<typeof MonacoEditor> | null>(null)
 const localJson = ref(flow.rawJson)
@@ -64,6 +66,16 @@ watch(() => flow.rawJson, (newJson) => {
       </div>
 
       <div class="flex items-center gap-2">
+        <button
+          class="text-xs px-2 py-1 rounded border transition-colors"
+          :class="copied
+            ? 'border-green-400 bg-green-50 dark:bg-green-950 text-green-600 dark:text-green-400'
+            : 'border-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-400'"
+          @click="copyShareUrl"
+        >
+          {{ copied ? '✓ Copied' : 'Share' }}
+        </button>
+
         <button
           class="text-xs px-2 py-1 rounded border border-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-400 transition-colors"
           title="Format document"
