@@ -1,6 +1,18 @@
 # USSD Phone Simulator
 
-A browser-based USSD session simulator built with Vue 3, TypeScript, and Monaco Editor. Test and debug USSD menu flows without a physical handset or carrier connection — entirely offline with a mock engine, or against a real backend.
+A browser-based USSD session simulator built with Vue 3, TypeScript, and Monaco Editor.
+
+**[Launch the simulator →](https://ussd-phone-simulator.vercel.app/)**
+
+Test and debug USSD menu flows without a physical handset or carrier connection — run entirely offline with a mock engine, or point it at a real backend.
+
+---
+
+## Live Demo
+
+**[https://ussd-phone-simulator.vercel.app/](https://ussd-phone-simulator.vercel.app/)**
+
+The deployed version runs in full mock mode by default. To connect a real backend, open **Settings → Live mode**, enter your endpoint URL, and switch the mode toggle in the top bar to **Live**.
 
 ---
 
@@ -21,10 +33,10 @@ A browser-based USSD session simulator built with Vue 3, TypeScript, and Monaco 
 
 ---
 
-## Quick Start
+## Quick Start (local)
 
 ```bash
-git clone https://github.com/your-org/ussd_phone_simulator.git
+git clone https://github.com/innochombo/ussd_phone_simulator.git
 cd ussd_phone_simulator
 npm install
 npm run dev
@@ -60,7 +72,7 @@ src/
 │   │   ├── SessionLog.vue     # Chat-bubble log
 │   │   └── LiveModePanel.vue  # Live mode settings panel
 │   ├── editor/
-│   │   ├── MonacoEditor.vue   # Monaco wrapper (exposes format/focus)
+│   │   ├── MonacoEditor.vue   # Monaco wrapper
 │   │   ├── FlowEditor.vue     # JSON editor with toolbar + error panel
 │   │   ├── FlowPreview.vue    # Tree + detail side panel
 │   │   └── FlowNode.vue       # Recursive tree node component
@@ -83,6 +95,18 @@ src/
 | [Usage Guide](docs/usage-guide.md) | Step-by-step walkthrough: simulator, editor, live mode |
 | [Live Mode Setup](docs/live-mode.md) | Backends, wire formats, CORS proxy, auth headers |
 | [Contributing](docs/contributing.md) | How to contribute — guides for humans and AI assistants |
+
+---
+
+## Connecting a PHP Backend
+
+If you are using the [php-ussd-framework](https://github.com/innochombo/php-ussd-framework):
+
+1. Set `'gateway' => JsonDriver::class` in `config/app.php`.
+2. Ensure `CorsMiddleware` is registered in `app.php` with `allow_origins: ['https://ussd-phone-simulator.vercel.app']`.
+3. In the simulator's **Live mode** tab, set the endpoint URL to your backend and select **JSON** format.
+
+For local development, use the Vite dev proxy to avoid CORS. See [Live Mode Setup](docs/live-mode.md) for details.
 
 ---
 
