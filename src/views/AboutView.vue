@@ -9,6 +9,7 @@ const SIMULATOR_DOCS = [
   { label: 'Usage Guide',            href: `${REPO_SIMULATOR}/blob/main/docs/usage-guide.md` },
   { label: 'Live Mode Setup',        href: `${REPO_SIMULATOR}/blob/main/docs/live-mode.md` },
   { label: 'Contributing',           href: `${REPO_SIMULATOR}/blob/main/docs/contributing.md` },
+  { label: 'Changelog',              href: `${REPO_SIMULATOR}/blob/main/CHANGELOG.md` },
 ]
 
 const FRAMEWORK_DOCS = [
@@ -16,6 +17,7 @@ const FRAMEWORK_DOCS = [
   { label: 'Framework Philosophy',   href: `${REPO_FRAMEWORK}/blob/main/docs/framework-philosophy.md` },
   { label: 'Guidelines & Usage',     href: `${REPO_FRAMEWORK}/blob/main/docs/guidelines-usage.md` },
   { label: 'Contributing & AI',      href: `${REPO_FRAMEWORK}/blob/main/docs/contributing-and-prompts.md` },
+  { label: 'Changelog',              href: `${REPO_FRAMEWORK}/blob/main/CHANGELOG.md` },
 ]
 
 const TECH_STACK = [

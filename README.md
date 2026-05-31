@@ -95,6 +95,7 @@ src/
 | [Usage Guide](docs/usage-guide.md) | Step-by-step walkthrough: simulator, editor, live mode |
 | [Live Mode Setup](docs/live-mode.md) | Backends, wire formats, CORS proxy, auth headers |
 | [Contributing](docs/contributing.md) | How to contribute — guides for humans and AI assistants |
+| [Changelog](CHANGELOG.md) | Release history and what changed in each version |
 
 ---
 
