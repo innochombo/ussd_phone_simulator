@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@monaco-editor/loader": "^1.7.0",
+    "html2canvas": "^1.4.1",
     "mitt": "^3.0.1",
     "monaco-editor": "^0.55.1",
     "pinia": "^2.3.1",
