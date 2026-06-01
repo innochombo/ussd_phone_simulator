@@ -4,11 +4,13 @@ import { useSessionStore } from '@/stores/session'
 import { useSessionExport } from '@/composables/useSessionExport'
 import { useSessionReplay } from '@/composables/useSessionReplay'
 const session = useSessionStore()
-const { exportJson, exportText } = useSessionExport()
+const { exportJson, exportText, exportImage } = useSessionExport()
 const { isReplaying, replayEntries, replay, stop } = useSessionReplay()
 
 const logEl = ref<HTMLElement | null>(null)
+const captureEl = ref<HTMLElement | null>(null)
 const showExportMenu = ref(false)
+const isExportingImage = ref(false)
 
 function scheduleCloseExport() {
   setTimeout(() => { showExportMenu.value = false }, 150)
@@ -32,6 +34,21 @@ watch(
 
 function startReplay() {
   replay([...session.log])
+}
+
+async function handleExportImage() {
+  if (captureEl.value) {
+    try {
+      isExportingImage.value = true
+      await exportImage(captureEl.value)
+      showExportMenu.value = false
+    } catch (error) {
+      console.error('Export failed:', error)
+      alert('Failed to export image. Please try again.')
+    } finally {
+      isExportingImage.value = false
+    }
+  }
 }
 
 function formatTime(ts: number): string {
@@ -97,6 +114,13 @@ function formatTime(ts: number): string {
             >
               Plain text
             </button>
+            <button
+              :disabled="isExportingImage"
+              class="w-full text-left px-3 py-1.5 text-xs text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              @click="handleExportImage()"
+            >
+              {{ isExportingImage ? 'Exporting…' : 'Image' }}
+            </button>
           </div>
         </div>
 
@@ -131,6 +155,51 @@ function formatTime(ts: number): string {
       <p v-if="session.log.length === 0" class="text-xs text-gray-400 dark:text-gray-500 italic text-center pt-4">
         No activity yet
       </p>
+    </div>
+
+    <!-- Hidden capture container for image export -->
+    <div
+      ref="captureEl"
+      class="fixed -left-[9999px] top-0 w-[800px]"
+      style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background-color: #ffffff; color: #111827"
+    >
+      <div style="padding: 24px">
+        <!-- Header -->
+        <div style="margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid #d1d5db">
+          <h2 style="font-size: 24px; font-weight: bold; margin-bottom: 8px">USSD Session Log</h2>
+          <p style="font-size: 14px; color: #4b5563; margin: 4px 0">
+            Exported: {{ new Date().toLocaleString() }}
+          </p>
+          <p style="font-size: 14px; color: #4b5563; margin: 4px 0">
+            Session ID: {{ session.sessionId ?? 'n/a' }}
+          </p>
+        </div>
+
+        <!-- Log entries -->
+        <div style="display: flex; flex-direction: column; gap: 12px">
+          <div
+            v-for="entry in session.log"
+            :key="entry.id"
+            style="display: flex; gap: 12px"
+            :style="entry.direction === 'OUT' ? { justifyContent: 'flex-end' } : { justifyContent: 'flex-start' }"
+          >
+            <div
+              style="max-width: 70%; border-radius: 8px; padding: 12px 16px; font-size: 14px; font-family: 'Courier New', monospace; line-height: 1.5; white-space: pre-wrap; word-wrap: break-word"
+              :style="[
+                entry.direction === 'OUT'
+                  ? { backgroundColor: '#2563eb', color: '#ffffff', borderTopRightRadius: '0' }
+                  : { backgroundColor: '#e5e7eb', color: '#111827', borderTopLeftRadius: '0' },
+              ]"
+            >
+              {{ entry.content }}
+              <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: 8px; opacity: 0.7; font-size: 12px">
+                <span>{{ new Date(entry.timestamp).toLocaleTimeString() }}</span>
+                <span v-if="entry.type" style="font-weight: 600">{{ entry.type }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </template>
